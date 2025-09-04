@@ -5,6 +5,7 @@ from NewModules.newaccount import AccountApp
 from NewModules.newwebhook import WebhookApp
 from NewModules.newsettings import SettingsApp
 from NewModules.newsave import SaveApp
+from NewModules.newtracker import TrackerApp
 
 from configparser import ConfigParser
 from pynput import keyboard
@@ -21,12 +22,20 @@ from discord import SyncWebhook
 
 class MainApp(CTk.CTk):
 
+    def delete(self) -> None:
+        if self.tracker:
+            self.tracker.destroy()
+        self.destroy()
+        exit
+
     def __init__(self) -> None:
         super().__init__()
 
         self.geometry('750x300')
         self.resizable(False,False)
         self.title('Key Log To Discord')
+
+        self.protocol('WM_DELETE_WINDOW', self.delete)
 
         self.activated: bool = False
         self.logging: bool = False
@@ -54,7 +63,7 @@ class MainApp(CTk.CTk):
 
         self.activate_button: CTk.CTkButton = CTk.CTkButton(
             self.input_frame,
-            command=self.activate,
+            command=lambda: TrackerApp(self),
             text="Activate",
         )
         self.activate_button.place(x=97, y=200)
@@ -76,6 +85,8 @@ class MainApp(CTk.CTk):
         self.masters={'input frame':self.input_frame, 'info display':self.info_display}
         self.account_app: AccountApp = AccountApp(self.masters)
         self.webhook_app: WebhookApp | None = None#WebhookApp(masters)
+        
+        self.tracker: None | TrackerApp = None
 
     def reset_saves(self) -> None:
         """Regenerates the saves
@@ -99,6 +110,7 @@ class MainApp(CTk.CTk):
             if self.logging:
                 if key.char == self.stop_key:
                     self.send(self.message)
+                    print(self.message)
                 else:
                     self.message += key.char
             elif key.char == self.start_key:
@@ -109,6 +121,7 @@ class MainApp(CTk.CTk):
             if self.logging:
                 if key == keyboard.Key[self.stop_key]:
                     self.send(self.message)
+                    print(self.message)
                 elif key == keyboard.Key.space:
                     self.message += ' '
                 elif key == keyboard.Key.backspace:
@@ -119,18 +132,9 @@ class MainApp(CTk.CTk):
                 self.logging = True
         except Exception as e:
             print(type(e),e)
-        
-    def activate(self) -> None:
-        self.settings_file.read('Saves/settings.ini')
-        self.start_key = self.settings_file['activation']['start']
-        self.stop_key = self.settings_file['activation']['stop']
 
-        if self.activated:
-            self.activate_button.configure(text='Activate')
-        else:
-            self.activate_button.configure(text="Activated")
-        
-        self.activated = not self.activated
+        if self.tracker != None:
+            self.tracker.string_var.set(self.message)
 
     def send(self,message) -> None:
 
