@@ -7,6 +7,8 @@ class TrackerApp(CTk.CTk):
 
         if self.activate(app): return
 
+        if app.settings_file['settings']['tracker'] == 'false': return
+
         super().__init__()
         self.attributes("-topmost", True)  # Always Ontop
         self.title('')
@@ -18,8 +20,6 @@ class TrackerApp(CTk.CTk):
 
         self.textbox = CTk.CTkLabel(self,textvariable=self.string_var)
         self.textbox.pack()
-
-        
 
         app.tracker = self
 
