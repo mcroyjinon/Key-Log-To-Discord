@@ -61,7 +61,7 @@ class SaveApp(CTk.CTk):
             if x:= app.account_app.vars['Account'].get(): self.account_entry.insert(0,x)      
         else:
             self.webhook_entry, self.webhook_check = self.create_entry_group('Webhook')
-            if x:= app.account_app.vars['Webhook'].get(): self.webhook_entry.insert(0,x)
+            if x:= app.webhook_app.vars['Webhook'].get(): self.webhook_entry.insert(0,x)
 
         self.save_button = CTk.CTkButton(
             self,
