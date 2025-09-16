@@ -10,7 +10,7 @@ class SaveApp(CTk.CTk):
         if self.account:  
             if self.channel_check.get():
                 save_file['channels'][self.channel_entry.get()] = self.values[0]
-            if self.account_entry.get():
+            if self.account_check.get():
                 save_file['accounts'][self.account_entry.get()] = self.values[1]
         else:
             if self.webhook_check.get():
