@@ -55,6 +55,8 @@ class SaveApp(CTk.CTk):
 
         if self.account:
             self.channel_entry, self.channel_check = self.create_entry_group('Channel')
+            if x:= app.account_app.vars['Channel'].get(): self.channel_entry.insert(0,x)
+
             self.account_entry, self.account_check = self.create_entry_group('Account')        
         else:
             self.webhook_entry, self.webhook_check = self.create_entry_group('Webhook')
