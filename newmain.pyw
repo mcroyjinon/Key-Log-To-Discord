@@ -140,22 +140,26 @@ class MainApp(CTk.CTk):
 
         self.logging = False
 
+        mic: str = self.settings_file['hardware']['mic']
+
         try:
             print(message)
             if self.settings_file['settings']['tts'] == 'true':
-                
-                mixer.init(devicename='CABLE Input (VB-Audio Virtual Cable)')
-                tts = gTTS(message)
-                tts.save('Saves/tts.mp3')
+                if mic == 'none':
+                    messagebox.showerror(message='No Mic Selected for TTS', title='Error')
+                else:             
+                    mixer.init(devicename=mic)
+                    tts = gTTS(message)
+                    tts.save('Saves/tts.mp3')
 
-                mixer.music.load('Saves/tts.mp3')
-                mixer.music.play()
+                    mixer.music.load('Saves/tts.mp3')
+                    mixer.music.play()
 
-                sound: MP3 =  MP3('Saves/tts.mp3')
-                sleep(sound.info.length)
+                    sound: MP3 =  MP3('Saves/tts.mp3')
+                    sleep(sound.info.length)
 
-                mixer.music.unload()
-                remove('Saves/tts.mp3')
+                    mixer.music.unload()
+                    remove('Saves/tts.mp3')
             
             if self.account_app:
                 payload = {'content': message}
@@ -166,15 +170,17 @@ class MainApp(CTk.CTk):
                 webhook.send(message, username=self.webhook_app.vars['Username'].get())
         except pygameerror as e:
             print(f"Pygame: Mic Doesn't Exist")
-            messagebox.showerror(message='TTS: Cannot Find Mic: CABLE Input (VB-Audio Virtual Cable)', title='Error')
+            messagebox.showerror(message='TTS: Cannot Find Mic: '+mic, title='Error')
         except PermissionError as e:
             print('Audio File being Used')
         except FileNotFoundError as e:
             print("Audio File Doesn't Exist")  
         except AssertionError as e:
-            print('No message to TTS')  
+            print('No message to TTS')
+        except requests.exceptions.MissingSchema as e:
+            messagebox.showerror('Error', 'Bad Channel Link')
         except Exception as e:
-            print(type(e),e)    
+            print('Unkown Error:',type(e),e)    
         
         self.message = ''
         self.logging = False

@@ -1,6 +1,7 @@
 import customtkinter as CTk
 from configparser import ConfigParser
 from pynput import keyboard
+import speech_recognition as sr
 import win32con
 import win32gui
 
@@ -173,6 +174,12 @@ class SettingsApp(CTk.CTk):
         settings_file: ConfigParser = ConfigParser()
         settings_file.read('Saves/settings.ini')
 
+        def change_settings(section, setting, value):
+            settings_file[section][setting] = value
+
+            with open('Saves/settings.ini', 'w') as content:
+                settings_file.write(content)
+
         for section in settings_file.sections():
             hotkey_section: CTk.CTkFrame = CTk.CTkFrame(
                 self.hotkey_frame,
@@ -229,7 +236,7 @@ class SettingsApp(CTk.CTk):
                         element_label.pack()
                 
                 # Key Section
-                value_button: ListenerButton | BoolButton
+                value_button: ListenerButton | BoolButton | CTk.CTkOptionMenu
 
                 match section:
                     case 'settings':
@@ -239,6 +246,19 @@ class SettingsApp(CTk.CTk):
                             button_textvar,
                             element
                         )
+                    case 'hardware':
+                        mic_list = sr.Microphone.list_microphone_names()
+
+                        value_button: CTk.CTkOptionMenu = CTk.CTkOptionMenu(
+                            master=key_section,
+                            values=mic_list + ['none'],
+                            fg_color='grey',
+                            text_color='red',
+                            button_color='grey',
+                            button_hover_color='black',
+                            command=lambda option: change_settings('hardware','mic', option)
+                        )
+                        value_button.set(settings_file['hardware']['mic'])
                     case _:
                         value_button = ListenerButton(
                             key_section,
