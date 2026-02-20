@@ -53,7 +53,8 @@ Under [quick send], add the message you want to send and set it equal to a key (
 ### TTS
 
 1. To get TTS started, you need to install **VB-CABLE Virtual Audio Device** at https://vb-audio.com/Cable/
-2. Turn **TTS** in the settings of  KeyLogToDiscord
-3. Switch the **Input** **Device** of your call to "CABLE Input (VB-Audio Virtual Cable)" (If the name is different, you will have to go to line 125 and paste the name there)
+2. Turn **TTS** in the settings of KeyLogToDiscord
+3. In the **Hardware** Section in the **Settings**, set the **Mic** as a Virtual Output Device
+4. Switch the **Input** **Device** of your call to the same Virtual Output Device.
 
 For TTS, you don't have to put any info in the entries.
